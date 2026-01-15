@@ -1,0 +1,27 @@
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/iostream.h>
+#include <pybind11/stl.h>
+
+#include "io_manager/interfaces/gpio_output.hpp"
+#include "io_manager/interfaces/gpio_input.hpp"
+#include "io_manager/factory/gpio_factory.hpp"
+
+namespace py = pybind11;
+
+PYBIND11_MODULE(io_manager_bindings, m) {
+  m.doc() = "GPIO interface bindings";
+
+  py::class_<GpioOutput>(m, "GpioOutput")
+      .def("write", &GpioOutput::write);
+
+  py::class_<GpioInput>(m, "GpioInput")
+      .def("read", &GpioInput::read);
+
+  m.def("create_gpio_output", &create_gpio_output,
+        py::arg("bcm_pin"),
+        py::arg("initial_value") = false);
+
+  m.def("create_gpio_input", &create_gpio_input,
+        py::arg("bcm_pin"));
+}
