@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 GpioInterruptNode: Nó ROS 2 para monitorar interrupções de GPIO usando io_manager_bindings.
 
@@ -30,9 +32,6 @@ Este nó é destinado a testes e validação de interrupções GPIO em sistemas
 Linux (ex: Raspberry Pi) e serve como base para integração com sensores,
 encoders, botões e sinais digitais orientados a evento.
 """
-
-
-#!/usr/bin/env python3
 
 import rclpy
 from rclpy.node import Node

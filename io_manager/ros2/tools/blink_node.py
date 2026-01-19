@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 BlinkNode: Nó ROS 2 para piscar um LED usando GPIO via io_manager_bindings.
 
@@ -10,8 +12,6 @@ BlinkNode: Nó ROS 2 para piscar um LED usando GPIO via io_manager_bindings.
 
 Este nó é útil para testar a integração do ROS 2 com GPIO em Python.
 """
-
-#!/usr/bin/env python3
 
 import rclpy
 from rclpy.node import Node
