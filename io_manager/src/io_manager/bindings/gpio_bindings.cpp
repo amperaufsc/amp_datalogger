@@ -5,12 +5,20 @@
 
 #include "io_manager/interfaces/gpio_output.hpp"
 #include "io_manager/interfaces/gpio_input.hpp"
+#include "io_manager/interfaces/gpio_interrupt.hpp"
+
 #include "io_manager/factory/gpio_factory.hpp"
+#include "io_manager/factory/gpio_interrupt_factory.hpp" 
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(io_manager_bindings, m) {
   m.doc() = "GPIO interface bindings";
+
+  py::enum_<Edge>(m, "Edge")
+      .value("RISING", Edge::RISING)
+      .value("FALLING", Edge::FALLING)
+      .value("BOTH", Edge::BOTH);
 
   py::class_<GpioOutput>(m, "GpioOutput")
       .def("write", &GpioOutput::write);
@@ -18,10 +26,19 @@ PYBIND11_MODULE(io_manager_bindings, m) {
   py::class_<GpioInput>(m, "GpioInput")
       .def("read", &GpioInput::read);
 
+  py::class_<GpioInterrupt, std::shared_ptr<GpioInterrupt>>(m, "GpioInterrupt")
+      .def("start", &GpioInterrupt::start)
+      .def("stop", &GpioInterrupt::stop);
+
   m.def("create_gpio_output", &create_gpio_output,
         py::arg("bcm_pin"),
         py::arg("initial_value") = false);
 
   m.def("create_gpio_input", &create_gpio_input,
         py::arg("bcm_pin"));
+
+  m.def("create_gpio_interrupt", &create_gpio_interrupt,
+      py::arg("bcm_pin"),
+      py::arg("edge"));
+
 }
