@@ -24,9 +24,14 @@ pkg_check_modules(LIBGPIOD REQUIRED libgpiod)
 # Core C++ library
 # =========================
 add_library(io_manager_core SHARED
+  # Drivers
   src/io_manager/drivers/libgpiod_gpio_input.cpp
   src/io_manager/drivers/libgpiod_gpio_output.cpp
+  src/io_manager/drivers/libgpiod_gpio_interrupt.cpp
+
+  # Factories
   src/io_manager/factory/gpio_factory.cpp
+  src/io_manager/factory/gpio_interrupt_factory.cpp
 )
 
 target_include_directories(io_manager_core
@@ -69,7 +74,7 @@ target_include_directories(io_manager_bindings
 # Install
 # =========================
 
-# Core library
+# Core C++ library
 install(
   TARGETS io_manager_core
   EXPORT export_${PROJECT_NAME}
@@ -78,10 +83,11 @@ install(
   RUNTIME DESTINATION bin
 )
 
-# Python binding → DENTRO do workspace (não /usr)
+# Python bindings
 install(
   TARGETS io_manager_bindings
-  LIBRARY DESTINATION lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages
+  LIBRARY DESTINATION
+    lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages
 )
 
 # Headers
@@ -90,10 +96,11 @@ install(
   DESTINATION include
 )
 
-# ROS node
+# ROS nodes (Python)
 install(
   PROGRAMS
-    ros2/nodes/blink_node.py
+    ros2/tools/blink_node.py
+    ros2/tools/gpio_interrupt_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
