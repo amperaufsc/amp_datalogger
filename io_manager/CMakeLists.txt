@@ -28,10 +28,12 @@ add_library(io_manager_core SHARED
   src/io_manager/drivers/libgpiod_gpio_input.cpp
   src/io_manager/drivers/libgpiod_gpio_output.cpp
   src/io_manager/drivers/libgpiod_gpio_interrupt.cpp
+  src/io_manager/drivers/ads1115.cpp
 
   # Factories
   src/io_manager/factory/gpio_factory.cpp
   src/io_manager/factory/gpio_interrupt_factory.cpp
+  src/io_manager/factory/analog_input_factory.cpp
 )
 
 target_include_directories(io_manager_core
@@ -97,6 +99,8 @@ install(
 )
 
 # ROS nodes (Python)
+
+# Tools
 install(
   PROGRAMS ros2/tools/blink_node.py
   DESTINATION lib/${PROJECT_NAME}
@@ -110,11 +114,17 @@ install(
 )
 
 install(
+  PROGRAMS ros2/tools/ads1115_test_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME ads1115_test_node
+)
+
+# Nodes
+install(
   PROGRAMS ros2/nodes/gpio_multi_interrupt_node.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME gpio_multi_interrupt_node
 )
-
 
 # =========================
 # Export
