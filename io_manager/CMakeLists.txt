@@ -98,11 +98,23 @@ install(
 
 # ROS nodes (Python)
 install(
-  PROGRAMS
-    ros2/tools/blink_node.py
-    ros2/tools/gpio_interrupt_node.py
+  PROGRAMS ros2/tools/blink_node.py
   DESTINATION lib/${PROJECT_NAME}
+  RENAME blink_node
 )
+
+install(
+  PROGRAMS ros2/tools/gpio_interrupt_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME gpio_interrupt_node
+)
+
+install(
+  PROGRAMS ros2/nodes/gpio_multi_interrupt_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME gpio_multi_interrupt_node
+)
+
 
 # =========================
 # Export
