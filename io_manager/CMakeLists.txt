@@ -126,6 +126,19 @@ install(
   RENAME gpio_multi_interrupt_node
 )
 
+# Config
+install(
+    DIRECTORY ros2/config
+    DESTINATION share/${PROJECT_NAME}
+)
+
+# Launch
+install(
+    DIRECTORY ros2/launch
+    DESTINATION share/${PROJECT_NAME}/launch
+)
+
+
 # =========================
 # Export
 # =========================
