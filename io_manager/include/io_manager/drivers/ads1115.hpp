@@ -2,18 +2,22 @@
  * @brief Implementa uma entrada analógica utilizando o conversor ADS1115 via I2C.
  *
  * Esta classe encapsula a comunicação com o ADC ADS1115 através do barramento I2C,
- * permitindo a leitura de sinais analógicos em diferentes canais do dispositivo.
- * Ela implementa a interface abstrata AnalogInput, possibilitando sua integração
- * transparente com o restante do sistema de IO.
+ * permitindo a leitura de sinais analógicos a partir de canais configuráveis do
+ * dispositivo. Ela implementa a interface abstrata AnalogInput, possibilitando
+ * integração transparente com o restante do sistema de IO.
+ *
+ * A classe suporta dois modos de leitura:
+ *  - Leitura do canal padrão associado à instância (via read())
+ *  - Leitura explícita de um canal específico (via read_channel())
  *
  * A classe é responsável por:
  *  - Abrir e gerenciar o dispositivo I2C no Linux
- *  - Configurar e acessar registradores do ADS1115
- *  - Realizar leituras de conversão analógica em um canal específico
+ *  - Configurar e acessar registradores internos do ADS1115
+ *  - Realizar conversões analógico-digitais sob demanda
  *
  * @param i2c_device Caminho do dispositivo I2C (ex: "/dev/i2c-1")
  * @param i2c_address Endereço I2C do ADS1115
- * @param channel Canal analógico inicial a ser utilizado (0–3)
+ * @param channel Canal analógico padrão a ser utilizado (0–3)
  */
 
 #pragma once
