@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 class AnalogInput {
 public:
   virtual ~AnalogInput() = default;
@@ -22,4 +24,11 @@ public:
    * @return Valor lido do conversor analógico.
    */
   virtual int read() = 0;
+
+  /**
+   * @brief Lê explicitamente um canal do ADC
+   *
+   * @param channel Canal analógico (0–3)
+   */
+  virtual int read_channel(uint8_t channel) = 0;
 };

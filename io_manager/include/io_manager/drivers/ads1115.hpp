@@ -30,10 +30,10 @@ public:
           uint8_t i2c_address,
           uint8_t channel);
 
-  ~Ads1115();
+  ~Ads1115() override;
 
   int read() override;
-  int read_channel(uint8_t channel);
+  int read_channel(uint8_t channel) override;
 
 private:
   int _fd;

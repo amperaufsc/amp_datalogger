@@ -23,7 +23,7 @@ Ads1115::Ads1115(const std::string& i2c_device,
   _i2c_address(i2c_address),
   _channel(channel)
 {
-  if (_channel > 3) {
+  if (channel > 3) {
     throw std::invalid_argument("Ads1115: channel must be 0..3");
   }
 
@@ -32,7 +32,7 @@ Ads1115::Ads1115(const std::string& i2c_device,
     throw std::runtime_error("Ads1115: failed to open I2C device");
   }
 
-  if (ioctl(_fd, I2C_SLAVE, _i2c_address) < 0) {
+  if (::ioctl(_fd, I2C_SLAVE, _i2c_address) < 0) {
     ::close(_fd);
     throw std::runtime_error("Ads1115: failed to set I2C address");
   }
@@ -49,7 +49,11 @@ int Ads1115::read() {
 }
 
 int Ads1115::read_channel(uint8_t channel) {
-  uint16_t mux = 0x4000 + (channel << 12);
+  if (channel > 3) {
+    throw std::invalid_argument("Ads1115: channel must be 0..3");
+  }
+
+  uint16_t mux = 0x4000 | (channel << 12);
 
   uint16_t config =
       OS_SINGLE |
@@ -61,12 +65,10 @@ int Ads1115::read_channel(uint8_t channel) {
 
   write_register(REG_CONFIG, config);
 
-  // tempo típico de conversão ~8ms (128 SPS)
-  usleep(9000);
+  usleep(9000);  // ~8ms @ 128 SPS
 
   uint16_t raw = read_register(REG_CONVERSION);
 
-  // conversão signed (ADS1115 é signed 16-bit)
   if (raw & 0x8000) {
     raw -= 1 << 16;
   }
@@ -75,10 +77,11 @@ int Ads1115::read_channel(uint8_t channel) {
 }
 
 void Ads1115::write_register(uint8_t reg, uint16_t value) {
-  uint8_t buf[3];
-  buf[0] = reg;
-  buf[1] = value >> 8;
-  buf[2] = value & 0xFF;
+  uint8_t buf[3] = {
+    reg,
+    static_cast<uint8_t>(value >> 8),
+    static_cast<uint8_t>(value & 0xFF)
+  };
 
   if (::write(_fd, buf, 3) != 3) {
     throw std::runtime_error("Ads1115: failed to write register");

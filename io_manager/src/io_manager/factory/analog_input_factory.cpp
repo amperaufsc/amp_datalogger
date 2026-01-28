@@ -1,3 +1,4 @@
+#include "io_manager/factory/analog_input_factory.hpp"
 #include "io_manager/drivers/ads1115.hpp"
 
 std::shared_ptr<AnalogInput> create_ads1115(
