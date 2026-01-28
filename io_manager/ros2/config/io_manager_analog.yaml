@@ -1,0 +1,60 @@
+io_manager:
+  analog_read_node:
+    ros__parameters:
+
+      read_period_s: 30.0
+
+      ads1115:
+        i2c_device: "/dev/i2c-1"
+        i2c_address: 72        # 0x48
+        channels: [0, 1, 2, 3]
+        conversion_time_ms: 2
+
+      mux:
+        settle_time_ms: 5
+        select_pins:
+          a: 17
+          b: 27
+          c: 22
+
+        map:
+          "000":
+            0: brake_pressure_0
+            1: hx4
+            2: hx12
+            3: hx20
+          "001":
+            0: brake_pressure_1
+            1: hx5
+            2: hx13
+            3: hx21
+          "010":
+            0: brake_pressure_2
+            1: hx6
+            2: hx14
+            3: hx22
+          "011":
+            0: brake_pressure_3
+            1: hx7
+            2: hx15
+            3: hx23
+          "100":
+            0: suspension_front_left
+            1: hx0
+            2: hx8
+            3: hx16
+          "101":
+            0: suspension_front_right
+            1: hx1
+            2: hx9
+            3: hx17
+          "110":
+            0: suspension_rear_left
+            1: hx2
+            2: hx10
+            3: hx18
+          "111":
+            0: suspension_rear_right
+            1: hx3
+            2: hx11
+            3: hx19
