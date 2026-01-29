@@ -126,6 +126,17 @@ install(
   RENAME gpio_multi_interrupt_node
 )
 
+install(
+  PROGRAMS ros2/nodes/analog_read_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME analog_read_node
+)
+
+install(
+  PROGRAMS src/io_manager/algorithms/utils.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Config
 install(
     DIRECTORY ros2/config
@@ -137,7 +148,6 @@ install(
     DIRECTORY ros2/launch
     DESTINATION share/${PROJECT_NAME}/launch
 )
-
 
 # =========================
 # Export
