@@ -13,8 +13,15 @@ static constexpr uint8_t REG_CONFIG     = 0x01;
 static constexpr uint16_t OS_SINGLE     = 0x8000;
 static constexpr uint16_t MODE_SINGLE   = 0x0100;
 static constexpr uint16_t PGA_4_096V    = 0x0200;
-static constexpr uint16_t DR_128SPS     = 0x0080;
 static constexpr uint16_t COMP_DISABLE = 0x0003;
+static constexpr uint16_t DR_8SPS   = 0x0000;
+static constexpr uint16_t DR_16SPS  = 0x0020;
+static constexpr uint16_t DR_32SPS  = 0x0040;
+static constexpr uint16_t DR_64SPS  = 0x0060;
+static constexpr uint16_t DR_128SPS = 0x0080;
+static constexpr uint16_t DR_250SPS = 0x00A0;
+static constexpr uint16_t DR_475SPS = 0x00C0;
+static constexpr uint16_t DR_860SPS = 0x00E0;
 
 Ads1115::Ads1115(const std::string& i2c_device,
                  uint8_t i2c_address,
@@ -60,7 +67,7 @@ int Ads1115::read_channel(uint8_t channel) {
       mux |
       PGA_4_096V |
       MODE_SINGLE |
-      DR_128SPS |
+      DR_860SPS |
       COMP_DISABLE;
 
   write_register(REG_CONFIG, config);
