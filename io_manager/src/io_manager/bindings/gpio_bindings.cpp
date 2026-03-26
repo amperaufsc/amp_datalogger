@@ -7,10 +7,12 @@
 #include "io_manager/interfaces/gpio_input.hpp"
 #include "io_manager/interfaces/gpio_interrupt.hpp"
 #include "io_manager/interfaces/analog_input.hpp"
+#include "io_manager/interfaces/imux.hpp"
 
 #include "io_manager/factory/gpio_factory.hpp"
 #include "io_manager/factory/gpio_interrupt_factory.hpp"
 #include "io_manager/factory/analog_input_factory.hpp"
+#include "io_manager/factory/mux_factory.hpp"
 
 namespace py = pybind11;
 
@@ -35,6 +37,10 @@ PYBIND11_MODULE(io_manager_bindings, m) {
   py::class_<AnalogInput, std::shared_ptr<AnalogInput>>(m, "AnalogInput")
       .def("read", &AnalogInput::read)
       .def("read_channel", &AnalogInput::read_channel);
+
+  py::class_<IMux, std::unique_ptr<IMux>>(m, "Mux")
+    .def("init", &IMux::init)
+    .def("set", &IMux::set);
 
   m.def(
       "create_gpio_output",
@@ -62,5 +68,13 @@ PYBIND11_MODULE(io_manager_bindings, m) {
       py::arg("i2c_device"),
       py::arg("address"),
       py::arg("channel")
+  );
+
+  m.def(
+    "create_mux",
+    &create_mux,
+    py::arg("pinA"),
+    py::arg("pinB"),
+    py::arg("pinC")
   );
 }
