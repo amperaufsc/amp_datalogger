@@ -1,0 +1,14 @@
+io_manager:
+  gpio_multi_interrupt_node:
+    ros__parameters:
+      gpio_names:
+        - encoder_rear_right
+        - encoder_rear_left
+        - encoder_front_right
+        - encoder_front_left
+      gpio_pins:
+        - 17
+        - 8
+        - 7
+        - 1
+      edge: rising
