@@ -10,20 +10,33 @@ jobs:
     container: ros:humble
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
       - name: Setup dependencies
         run: |
-          sudo apt update
+          apt update
           apt install -y python3-colcon-common-extensions python3-rosdep
+          rosdep init || true
 
-      - name: Init rosdep
+      - name: Setup workspace
         run: |
-          rosdep update
-          rosdep install --from-paths src --ignore-src -r -y
+          mkdir -p ws/src
+          mv * ws/src/ || true
+
+      - name: Setup dependencies
+        run: |
+          apt update
+          apt install -y \
+            python3-colcon-common-extensions \
+            python3-rosdep \
+            libgpiod-dev \
+            pkg-config \
+            pybind11-dev \
+            python3-dev
 
       - name: Build
+        shell: bash
         run: |
+          cd ws
           source /opt/ros/humble/setup.bash
           colcon build --event-handlers console_direct+
