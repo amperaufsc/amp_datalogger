@@ -23,11 +23,16 @@ jobs:
           mkdir -p ws/src
           mv * ws/src/ || true
 
-      - name: Install deps
+      - name: Setup dependencies
         run: |
-          cd ws
-          rosdep update
-          rosdep install --from-paths src --ignore-src -r -y
+          apt update
+          apt install -y \
+            python3-colcon-common-extensions \
+            python3-rosdep \
+            libgpiod-dev \
+            pkg-config \
+            pybind11-dev \
+            python3-dev
 
       - name: Build
         shell: bash
