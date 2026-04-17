@@ -30,6 +30,7 @@ jobs:
           rosdep install --from-paths src --ignore-src -r -y
 
       - name: Build
+        shell: bash
         run: |
           cd ws
           source /opt/ros/humble/setup.bash
