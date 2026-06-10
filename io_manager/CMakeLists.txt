@@ -22,7 +22,7 @@ find_package(pybind11 REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGPIOD REQUIRED libgpiod)
 
-find_package(io_manager_msgs REQUIRED)
+find_package(manager_msgs REQUIRED)
 
 # =========================
 # Core C++ library
