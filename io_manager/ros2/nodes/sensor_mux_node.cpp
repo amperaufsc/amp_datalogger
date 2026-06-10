@@ -75,7 +75,7 @@ void SensorMuxNode::loop()
     int ch2_value = ads_->read_channel(2);
     int ch3_value = ads_->read_channel(3);
 
-    io_manager_msgs::msg::SensorMuxFrame msg;
+    manager_msgs::msg::SensorMuxFrame msg;
 
     msg.header.stamp = this->now();
     msg.header.frame_id = "sensor_mux";

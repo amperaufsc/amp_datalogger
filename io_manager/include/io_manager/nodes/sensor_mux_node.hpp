@@ -24,7 +24,7 @@
  * - i2c_address (int): endereço I2C do ADS1115
  *
  * Tópico publicado:
- * - sensor_mux/data (io_manager_msgs/msg/SensorMuxFrame)
+ * - sensor_mux/data (manager_msgs/msg/SensorMuxFrame)
  *
  * Estrutura da mensagem:
  * - header: timestamp e frame de referência
