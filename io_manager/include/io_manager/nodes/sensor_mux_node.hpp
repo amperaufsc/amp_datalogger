@@ -72,9 +72,7 @@ private:
     std::shared_ptr<Mux> mux_;
     std::shared_ptr<Ads1115> ads_;
 
-    rclcpp::Publisher<
-        io_manager_msgs::msg::SensorMuxFrame
-    >::SharedPtr pub_;
+    rclcpp::Publisher<manager_msgs::msg::SensorMuxFrame>::SharedPtr pub_;
 
     rclcpp::TimerBase::SharedPtr timer_;
 

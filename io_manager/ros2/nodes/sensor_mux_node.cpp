@@ -61,7 +61,7 @@ SensorMuxNode::SensorMuxNode() : Node("sensor_mux_node"), mux_state_(0)
 
     rclcpp::QoS qos(10);
 
-    pub_ = this->create_publisher<io_manager_msgs::msg::SensorMuxFrame>("sensor_mux/data", qos);
+    pub_ = this->create_publisher<manager_msgs::msg::SensorMuxFrame>("sensor_mux/data", qos);
 
     timer_ = this->create_wall_timer( std::chrono::microseconds(static_cast<int>(1000000.0 / frequency)), std::bind(&SensorMuxNode::loop, this));
 }
