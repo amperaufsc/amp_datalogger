@@ -56,7 +56,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "io_manager_msgs/msg/sensor_mux_frame.hpp"
+#include "manager_msgs/msg/sensor_mux_frame.hpp"
 
 #include "io_manager/drivers/ads1115.hpp"
 #include "io_manager/drivers/mux.hpp"
