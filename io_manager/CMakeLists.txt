@@ -22,6 +22,8 @@ find_package(pybind11 REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGPIOD REQUIRED libgpiod)
 
+find_package(manager_msgs REQUIRED)
+
 # =========================
 # Core C++ library
 # =========================
@@ -92,6 +94,7 @@ target_link_libraries(sensor_mux_node io_manager_core)
 ament_target_dependencies(sensor_mux_node
   rclcpp
   std_msgs
+  manager_msgs
 )
 
 install(TARGETS sensor_mux_node
