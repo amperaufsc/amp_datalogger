@@ -53,10 +53,10 @@
 #include <memory>
 #include <array>
 #include <string>
+#include <map>
 
 #include "rclcpp/rclcpp.hpp"
-
-#include "manager_msgs/msg/sensor_mux_frame.hpp"
+#include "std_msgs/msg/float64.hpp"
 
 #include "io_manager/drivers/ads1115.hpp"
 #include "io_manager/drivers/mux.hpp"
@@ -72,14 +72,16 @@ private:
     std::shared_ptr<Mux> mux_;
     std::shared_ptr<Ads1115> ads_;
 
-    rclcpp::Publisher<manager_msgs::msg::SensorMuxFrame>::SharedPtr pub_;
-
     rclcpp::TimerBase::SharedPtr timer_;
 
     uint8_t mux_state_;
-    
+
+    bool enable_ch_[4];
+
     std::array<std::string, 8> map_ch0_;
     std::array<std::string, 8> map_ch1_;
     std::array<std::string, 8> map_ch2_;
     std::array<std::string, 8> map_ch3_;
+
+    std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
 };
