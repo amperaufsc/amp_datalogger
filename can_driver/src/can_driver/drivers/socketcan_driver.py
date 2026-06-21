@@ -4,7 +4,7 @@ from typing import Optional
 
 import can
 
-from can_driver.models.can_frame import CanFrame
+from can_frame import CanFrame
 
 
 class SocketCanDriver:

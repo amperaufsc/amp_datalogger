@@ -2,7 +2,7 @@ from pathlib import Path
 
 import cantools
 
-from can_driver.models.can_frame import CanFrame
+from can_frame import CanFrame
 
 
 class DbcParser:
