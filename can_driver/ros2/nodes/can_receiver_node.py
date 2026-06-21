@@ -1,5 +1,57 @@
 #!/usr/bin/env python3
 
+"""
+CanReceiverNode: Nó ROS 2 para recepção, decodificação e publicação de mensagens CAN.
+
+Este nó realiza a interface entre o barramento CAN (SocketCAN) e o ecossistema
+ROS 2. Os frames recebidos são decodificados utilizando um arquivo DBC e
+publicados automaticamente em tópicos ROS específicos para cada mensagem
+definida no banco CAN.
+
+Características principais:
+- Recepção de frames CAN via SocketCAN
+- Decodificação automática utilizando arquivo DBC
+- Criação automática de publishers para todas as mensagens do DBC
+- Publicação das mensagens decodificadas utilizando CanDecodedMessage
+- Processamento assíncrono da recepção CAN em uma thread dedicada
+- Tratamento de mensagens desconhecidas e erros de decodificação
+
+Parâmetros ROS 2:
+- dbc_path (string): caminho para o arquivo DBC utilizado na decodificação
+- can_interface (string): interface SocketCAN (ex.: "can0" ou "vcan0")
+- receive_timeout (double): tempo máximo de espera por um frame CAN
+
+Tópicos publicados:
+- /can/<NomeDaMensagem> (manager_msgs/msg/CanDecodedMessage)
+
+Conteúdo da mensagem publicada:
+- Timestamp da recepção
+- Arbitration ID
+- DLC
+- Nome da mensagem CAN
+- ECU remetente (Sender)
+- Lista de sinais presentes na mensagem
+- Unidade de cada sinal
+- Tipo de cada sinal (numeric/string)
+- Valor numérico ou textual correspondente
+
+Funcionamento:
+- Carrega o arquivo DBC informado
+- Inicializa o driver SocketCAN
+- Cria automaticamente um publisher para cada mensagem definida no DBC
+- Executa uma thread dedicada para recepção contínua dos frames
+- Cada frame recebido é:
+    - identificado pelo Arbitration ID
+    - decodificado utilizando o DBC
+    - convertido para CanDecodedMessage
+    - publicado no tópico correspondente
+
+Observações:
+- Frames inexistentes no DBC são ignorados.
+- Cada mensagem CAN possui um tópico ROS exclusivo.
+- A recepção CAN ocorre em thread separada do executor ROS.
+"""
+
 from pathlib import Path
 import threading
 
@@ -39,9 +91,6 @@ class CanReceiverNode(Node):
 
         self._driver.open()
 
-        #
-        # Cria todos os publishers a partir do DBC
-        #
         self._topic_manager = CanTopicManager(
             node=self,
             dbc=self._dbc,
@@ -81,9 +130,6 @@ class CanReceiverNode(Node):
                 self._topic_manager.publish(frame)
 
             except KeyError:
-                #
-                # Frame não existe no DBC.
-                #
                 continue
 
             except Exception as e:

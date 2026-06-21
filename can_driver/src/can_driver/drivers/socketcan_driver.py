@@ -1,9 +1,33 @@
-from __future__ import annotations
+"""
+SocketCanDriver: Interface de comunicação CAN utilizando SocketCAN.
 
+Esta classe encapsula a biblioteca python-can, fornecendo uma interface simples
+para abertura da interface CAN, envio e recepção de frames, além do controle do
+ciclo de vida da conexão.
+
+Características principais:
+- Abertura e fechamento da interface SocketCAN
+- Envio de frames CAN
+- Recepção de frames CAN com timeout configurável
+- Limpeza da fila de recepção
+- Suporte ao protocolo Context Manager (with)
+
+Funcionamento:
+- A interface SocketCAN é aberta através do método open().
+- Frames CAN podem ser enviados utilizando send().
+- Frames recebidos são convertidos para o modelo CanFrame.
+- A interface pode ser utilizada com a instrução "with", garantindo o
+  fechamento automático da conexão.
+
+Observações:
+- Requer uma interface SocketCAN configurada no sistema operacional.
+- Lança RuntimeError caso operações sejam realizadas com a interface fechada.
+"""
+
+from __future__ import annotations
 from typing import Optional
 
 import can
-
 from can_frame import CanFrame
 
 

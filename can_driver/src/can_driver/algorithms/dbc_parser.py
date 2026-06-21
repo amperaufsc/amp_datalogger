@@ -1,3 +1,29 @@
+"""
+DbcParser: Interface para codificação e decodificação de mensagens CAN utilizando DBC.
+
+Esta classe encapsula a biblioteca cantools, fornecendo uma interface simples
+para carregar um arquivo DBC, codificar sinais em frames CAN e decodificar
+frames CAN em seus respectivos sinais.
+
+Características principais:
+- Carregamento de arquivos DBC
+- Decodificação de frames CAN
+- Codificação de sinais em frames CAN
+- Consulta de mensagens por nome ou Frame ID
+- Listagem de todas as mensagens definidas no DBC
+
+Funcionamento:
+- O arquivo DBC é carregado durante a inicialização.
+- A decodificação utiliza o Arbitration ID do frame para localizar a
+  mensagem correspondente.
+- A codificação recebe o nome da mensagem e os sinais desejados,
+  produzindo um frame CAN pronto para transmissão.
+
+Observações:
+- A implementação utiliza a biblioteca cantools.
+- O Frame ID utilizado corresponde ao Arbitration ID definido no DBC.
+"""
+
 from pathlib import Path
 
 import cantools

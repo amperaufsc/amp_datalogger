@@ -1,3 +1,33 @@
+"""
+CanTopicManager: Gerenciador de tópicos ROS para mensagens CAN decodificadas.
+
+Esta classe é responsável por criar automaticamente um publisher ROS para cada
+mensagem definida no arquivo DBC e publicar os frames CAN recebidos após sua
+decodificação.
+
+Características principais:
+- Criação automática de publishers a partir do DBC
+- Associação entre Arbitration ID e publisher correspondente
+- Conversão de frames CAN para CanDecodedMessage
+- Preenchimento automático dos metadados da mensagem
+- Suporte a sinais numéricos e textuais
+
+Funcionamento:
+- Durante a inicialização, percorre todas as mensagens presentes no DBC
+- Cria um tópico ROS para cada mensagem no formato:
+    /can/<NomeDaMensagem>
+- Quando um frame é recebido:
+    - identifica a mensagem correspondente pelo Arbitration ID
+    - realiza a decodificação dos sinais
+    - converte os dados para CanDecodedMessage
+    - publica a mensagem no tópico correspondente
+
+Observações:
+- O nome dos tópicos é obtido diretamente do arquivo DBC.
+- Cada Arbitration ID possui exatamente um publisher.
+- Sinais numéricos e textuais são armazenados em vetores distintos.
+"""
+
 from manager_msgs.msg import CanDecodedMessage
 
 class CanTopicManager:
