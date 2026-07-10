@@ -110,6 +110,13 @@ install(PROGRAMS
   RENAME can_receiver_node
 )
 
+install(PROGRAMS
+  ros2/tools/can_sender_test_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME can_sender_test_node
+)
+
+
 # =========================
 # Export
 # =========================
