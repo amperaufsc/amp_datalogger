@@ -117,3 +117,27 @@ KERNEL
 
 # Monitorar mensagens do kernel em tempo real
 dmesg -w
+
+========================================
+SYSTEMCTL
+========================================
+
+# Ver status
+systemctl status as_system.service
+systemctl status datalogger.service
+
+# Acompanhar logs em tempo real
+journalctl -u as_system.service -f
+journalctl -u datalogger.service -f
+
+# Parar
+sudo systemctl stop as_system.service
+sudo systemctl stop datalogger.service
+
+# Reiniciar
+sudo systemctl restart as_system.service
+sudo systemctl restart datalogger.service
+
+# Desabilitar inicialização automática
+sudo systemctl disable as_system.service
+sudo systemctl disable datalogger.service
