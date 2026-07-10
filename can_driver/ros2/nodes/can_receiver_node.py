@@ -75,7 +75,7 @@ class CanReceiverNode(Node):
         )
 
         self.declare_parameter("dbc_path", default_dbc)
-        self.declare_parameter("can_interface", "vcan0")
+        self.declare_parameter("can_interface", "can0")
         self.declare_parameter("receive_timeout", 0.1)
 
         dbc_path = self.get_parameter("dbc_path").value
