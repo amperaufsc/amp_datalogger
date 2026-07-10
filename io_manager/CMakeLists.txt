@@ -87,17 +87,40 @@ target_include_directories(sensor_mux_node
     include
 )
 
-# Link com a biblioteca core
-target_link_libraries(sensor_mux_node io_manager_core)
+target_link_libraries(sensor_mux_node
+  io_manager_core
+)
 
-# Dependências ROS2
 ament_target_dependencies(sensor_mux_node
   rclcpp
   std_msgs
   manager_msgs
 )
 
-install(TARGETS sensor_mux_node
+# =========================
+# C++ ROS 2 tool: sensor_debug_node
+# =========================
+add_executable(sensor_debug_node
+  ros2/tools/sensor_debug_node.cpp
+)
+
+target_include_directories(sensor_debug_node
+  PRIVATE
+    include
+)
+
+target_link_libraries(sensor_debug_node
+  io_manager_core
+)
+
+ament_target_dependencies(sensor_debug_node
+  rclcpp
+  std_msgs
+)
+
+install(TARGETS
+  sensor_mux_node
+  sensor_debug_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
