@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting datalogger"
+echo "Starting AS system"
 
 set -e
 
@@ -29,31 +29,24 @@ cleanup() {
 
 trap cleanup EXIT INT TERM
 
+echo "Iniciando Foxglove Bridge..."
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml &
+FOXGLOVE_PID=$!
+
+sleep 5
+
 echo "Iniciando VectorNav..."
 ros2 launch vectornav vectornav.launch.py &
 VN_PID=$!
 
 sleep 5
 
-echo "Iniciando Sensor Debug Node..."
-ros2 launch io_manager sensor_mux_node &
-SENSOR_PID=$!
+echo "Iniciando CAN Receiver..."
+ros2 run can_driver can_receiver_node &
+CAN_PID=$!
 
 sleep 2
 
-DAY_FOLDER=$(date +"%Y_%m_%d")
-
-mkdir -p "$DAY_FOLDER"
-
-if [ -z "$BAG_NAME" ]; then
-    BAG_NAME=$(date +"%H-%M-%S")
-fi
-
-BAG_PATH="${DAY_FOLDER}/${BAG_NAME}"
-
-echo "Gravando bag em: $BAG_PATH"
-
-ros2 bag record -a \
-    --storage mcap \
-    -o "$BAG_PATH" \
-    --max-bag-duration 30
+echo "Iniciando Sensor Debug Node..."
+ros2 run io_manager sensor_debug_node &
+SENSOR_PID=$!
