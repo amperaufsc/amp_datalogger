@@ -1,5 +1,48 @@
 #!/usr/bin/env python3
 
+"""
+PressureSensorNode: Nó ROS 2 para conversão e publicação da pressão dos sensores de freio.
+
+Este nó recebe os valores brutos provenientes do conversor A/D (ADS1115),
+converte esses valores para tensão considerando a referência do ADC e o
+divisor resistivo utilizado no hardware, e aplica a calibração de cada
+sensor para obter a pressão correspondente.
+
+Cada sensor possui uma calibração linear independente, definida pelos
+coeficientes "a" e "b", permitindo compensar diferenças entre sensores.
+
+O nó desacopla a taxa de aquisição da taxa de publicação:
+- O cálculo da pressão é realizado sempre que uma nova leitura do ADC é recebida.
+- A publicação ocorre em uma frequência fixa configurável.
+
+Parâmetros:
+- sensor1_a (float): coeficiente angular da calibração do sensor 1
+- sensor1_b (float): coeficiente linear da calibração do sensor 1
+- sensor2_a (float): coeficiente angular da calibração do sensor 2
+- sensor2_b (float): coeficiente linear da calibração do sensor 2
+- publish_rate_hz (float): frequência de publicação das pressões
+- min_voltage (float): tensão mínima esperada do sensor
+- max_voltage (float): tensão máxima esperada do sensor
+
+Tópicos assinados:
+- /sensor_mux/brake_0
+  Mensagem: std_msgs/msg/Float64
+  Conteúdo: valor bruto do ADC referente ao sensor de pressão 1
+
+- /sensor_mux/brake_1
+  Mensagem: std_msgs/msg/Float64
+  Conteúdo: valor bruto do ADC referente ao sensor de pressão 2
+
+Tópicos publicados:
+- /pressure_sensor_1/pressure
+  Mensagem: std_msgs/msg/Float64
+  Conteúdo: pressão calculada do sensor 1
+
+- /pressure_sensor_2/pressure
+  Mensagem: std_msgs/msg/Float64
+  Conteúdo: pressão calculada do sensor 2
+"""
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float64
@@ -61,16 +104,22 @@ class PressureSensorNode(Node):
         self.create_timer(1.0 / publish_rate, self.publish_pressures)
 
         self.get_logger().info("PressureSensorNode subscribing direct sensor topics")
+    
+    def adc_to_voltage(self, raw: float) -> float:
+        adc_voltage = raw * 4.096 / 32768.0
+        return adc_voltage * 1.5
 
-    def sensor_1_callback(self, msg: Float64):
-        v = msg.data
-        if self.min_voltage <= v <= self.max_voltage:
-            self.pressure_1 = self.sensor_1.update(v)
+    def sensor_1_callback(self, msg):
+        raw = msg.data
+        voltage = self.adc_to_sensor_voltage(raw)
+
+        self.pressure_1 = self.sensor_1.update(voltage)
 
     def sensor_2_callback(self, msg: Float64):
-        v = msg.data
-        if self.min_voltage <= v <= self.max_voltage:
-            self.pressure_2 = self.sensor_2.update(v)
+        raw = msg.data
+        voltage = self.adc_to_voltage(raw)
+
+        self.pressure_2 = self.sensor_2.update(voltage)
 
     def publish_pressures(self):
 
