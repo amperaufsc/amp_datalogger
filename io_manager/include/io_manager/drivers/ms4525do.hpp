@@ -22,22 +22,56 @@
  * - Não realiza gerenciamento de abertura/fechamento do dispositivo
  * - Pode ser adaptado para implementar a interface IMs4525DO, se necessário
  */
+
 #pragma once
+
 #include <cstdint>
+#include <string>
 
-#include "io_manager/interfaces/ims4525do.hpp"
-
-class MS4525DO : public IMs4525DO {
+class MS4525DO
+{
 public:
-    MS4525DO(const char* device = "/dev/i2c-1", uint8_t address = 0x28);
 
-    bool init() override;
-    PitotData read() override;
+    enum class Status
+    {
+        OK,
+        STALE_DATA,
+        COMMAND_MODE,
+        DIAGNOSTIC_FAULT,
+        I2C_ERROR
+    };
+
+    struct Measurement
+    {
+        double differential_pressure_pa;
+        double temperature_c;
+
+        bool valid;
+        Status status;
+    };
+
+    MS4525DO(
+        int bus = 1,
+        uint8_t address = 0x28,
+        double pressure_min_pa = -1000.0,
+        double pressure_max_pa = 1000.0);
+
     ~MS4525DO();
 
+    bool initialize();
+
+    Measurement read();
+
 private:
-    const char* device;
-    uint8_t address;
-    int fd = -1;
-    float offset = 0.0f;
+    int bus_;
+    uint8_t address_;
+    int fd_;
+
+    double pressure_min_pa_;
+    double pressure_max_pa_;
+
+    bool readRaw(
+        uint16_t &pressure_counts,
+        uint16_t &temperature_counts,
+        uint8_t &status);
 };
