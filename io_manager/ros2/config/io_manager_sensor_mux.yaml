@@ -1,6 +1,6 @@
 /io_manager/sensor_mux_node:
   ros__parameters:
-    frequency: 800
+    frequency: 400
 
     enable_channel_0: false
     enable_channel_1: false
@@ -16,16 +16,16 @@
       - ""
       - ""
       - "steering"
-      - "extra_0"
-      - "extra_1"
-      - "extra_2"
+      - ""
+      - ""
+      - ""
 
     map_ch3:
+      - "susp_fr" 
+      - ""
+      - ""
       - "brake_0"
-      - "brake_1"
-      - "brake_2"
-      - "brake_3"
       - "susp_fl"
-      - "susp_fr"
+      - "brake_1"
       - "susp_rl"
       - "susp_rr"

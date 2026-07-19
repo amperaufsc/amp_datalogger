@@ -135,22 +135,42 @@ SensorMuxNode::SensorMuxNode() : Node("sensor_mux_node"), mux_state_(0)
 
 void SensorMuxNode::loop()
 {
+    using Clock = std::chrono::steady_clock;
+    using us = std::chrono::microseconds;
+
+    auto t0 = Clock::now();
+
+    auto t_mux0 = Clock::now();
     mux_->set(mux_state_);
-    usleep(500); 
+    auto t_mux1 = Clock::now();
 
+    auto t_sleep0 = Clock::now();
+    usleep(500);
+    auto t_sleep1 = Clock::now();
+
+    auto t_stamp0 = Clock::now();
     auto stamp = this->get_clock()->now();
+    auto t_stamp1 = Clock::now();
 
-    int ch0 = ads_->read_channel(0);
-    int ch1 = ads_->read_channel(1);
-    int ch2 = ads_->read_channel(2);
+    auto t_ads0 = Clock::now();
+
+    //int ch0 = ads_->read_channel(0);
+    //int ch1 = ads_->read_channel(1);
+    //int ch2 = ads_->read_channel(2);
     int ch3 = ads_->read_channel(3);
+
+    auto t_ads1 = Clock::now();
+
+    auto t_pub0 = Clock::now();
 
     auto publish = [&](const std::string &name, double value)
     {
-        if (name.empty()) return;
+        if (name.empty())
+            return;
 
         auto it = pubs_.find(name);
-        if (it == pubs_.end()) return;
+        if (it == pubs_.end())
+            return;
 
         std_msgs::msg::Float64 msg;
         msg.data = value;
@@ -158,13 +178,39 @@ void SensorMuxNode::loop()
         it->second->publish(msg);
     };
 
-    if (enable_ch_[2])
-        publish(map_ch2_[mux_state_], ch2);
+    //if (enable_ch_[2])
+    //    publish(map_ch2_[mux_state_], ch2);
 
     if (enable_ch_[3])
         publish(map_ch3_[mux_state_], ch3);
 
+    auto t_pub1 = Clock::now();
+
+    auto t_state0 = Clock::now();
+
     mux_state_ = (mux_state_ + 1) % 8;
+
+    auto t_state1 = Clock::now();
+
+    auto t_end = Clock::now();
+
+    std::cout
+        << "MUX: "
+        << std::chrono::duration_cast<us>(t_mux1 - t_mux0).count()
+        << " us | Sleep: "
+        << std::chrono::duration_cast<us>(t_sleep1 - t_sleep0).count()
+        << " us | Stamp: "
+        << std::chrono::duration_cast<us>(t_stamp1 - t_stamp0).count()
+        << " us | ADS1115: "
+        << std::chrono::duration_cast<us>(t_ads1 - t_ads0).count()
+        << " us | Publish: "
+        << std::chrono::duration_cast<us>(t_pub1 - t_pub0).count()
+        << " us | State: "
+        << std::chrono::duration_cast<us>(t_state1 - t_state0).count()
+        << " us | TOTAL: "
+        << std::chrono::duration_cast<us>(t_end - t0).count()
+        << " us"
+        << std::endl;
 }
 
 int main(int argc, char * argv[])
