@@ -17,12 +17,14 @@ cleanup() {
     kill $FOXGLOVE_PID 2>/dev/null || true
     kill $VN_PID 2>/dev/null || true
     kill $CAN_PID 2>/dev/null || true
-    kill $SENSOR_PID 2>/dev/null || true
+    kill $MUX_PID 2>/dev/null || true
+    kill $PRESSURE_PID 2>/dev/null || true
 
     wait $FOXGLOVE_PID 2>/dev/null || true
     wait $VN_PID 2>/dev/null || true
     wait $CAN_PID 2>/dev/null || true
-    wait $SENSOR_PID 2>/dev/null || true
+    wait $MUX_PID 2>/dev/null || true
+    wait $PRESSURE_PID 2>/dev/null || true
 
     echo "Finalizado."
 }
@@ -35,21 +37,35 @@ VN_PID=$!
 
 sleep 5
 
-echo "Iniciando Sensor Debug Node..."
-ros2 launch io_manager sensor_mux_node &
-SENSOR_PID=$!
+echo "Iniciando CAN Receiver..."
+ros2 run can_driver can_receiver_node &
+CAN_PID=$!
 
 sleep 2
 
+echo "Iniciando Sensor Mux..."
+ros2 launch io_manager sensor_mux_launch.py &
+MUX_PID=$!
+
+sleep 2
+
+echo "Iniciando Pressure Measurement..."
+ros2 run datalogger pressure_measurement_node &
+PRESSURE_PID=$!
+
+sleep 2
+
+BAG_ROOT=~/bags
+
 DAY_FOLDER=$(date +"%Y_%m_%d")
 
-mkdir -p "$DAY_FOLDER"
+mkdir -p "$BAG_ROOT/$DAY_FOLDER"
 
 if [ -z "$BAG_NAME" ]; then
     BAG_NAME=$(date +"%H-%M-%S")
 fi
 
-BAG_PATH="${DAY_FOLDER}/${BAG_NAME}"
+BAG_PATH="$BAG_ROOT/$DAY_FOLDER/$BAG_NAME"
 
 echo "Gravando bag em: $BAG_PATH"
 
