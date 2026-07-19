@@ -27,7 +27,27 @@ int main()
 
         if (!measurement.valid)
         {
-            std::cout << "Invalid measurement" << std::endl;
+            switch (measurement.status)
+            {
+            case MS4525DO::Status::I2C_ERROR:
+                std::cout << "I2C communication error" << std::endl;
+                break;
+
+            case MS4525DO::Status::STALE_DATA:
+                std::cout << "Sensor returned stale data" << std::endl;
+                break;
+
+            case MS4525DO::Status::COMMAND_MODE:
+                std::cout << "Sensor is in command mode" << std::endl;
+                break;
+
+            case MS4525DO::Status::DIAGNOSTIC_FAULT:
+                std::cout << "Sensor diagnostic fault" << std::endl;
+                break;
+
+            default:
+                break;
+            }
         }
         else
         {
