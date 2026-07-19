@@ -22,6 +22,8 @@ find_package(pybind11 REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGPIOD REQUIRED libgpiod)
 
+find_package(manager_msgs REQUIRED)
+
 # =========================
 # Core C++ library
 # =========================
@@ -109,8 +111,26 @@ target_link_libraries(sensor_mux_node io_manager_core)
 target_link_libraries(ms4525do_test_node io_manager_core)
 target_link_libraries(pitot_sensor_node io_manager_core)
 
-# Dependências ROS2
 ament_target_dependencies(sensor_mux_node
+  rclcpp
+  std_msgs
+  manager_msgs
+)
+
+add_executable(sensor_debug_node
+  ros2/tools/sensor_debug_node.cpp
+)
+
+target_include_directories(sensor_debug_node
+  PRIVATE
+    include
+)
+
+target_link_libraries(sensor_debug_node
+  io_manager_core
+)
+
+ament_target_dependencies(sensor_debug_node
   rclcpp
   std_msgs
 )
@@ -200,6 +220,18 @@ install(PROGRAMS
 install(PROGRAMS
   src/io_manager/algorithms/utils.py
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  ros2/nodes/uart_receiver_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME uart_receiver_node
+)
+
+install(PROGRAMS
+  ros2/nodes/uart_sender_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME uart_sender_node
 )
 
 # Config

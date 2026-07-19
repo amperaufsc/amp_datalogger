@@ -1,39 +1,51 @@
 /**
- * @file sensor_mux_node.hpp / sensor_mux_node.cpp
- * @brief Nó ROS 2 para leitura de sinais analógicos via ADS1115 com MUX.
+ * @file sensor_mux_node.hpp
+ * @brief Nó ROS 2 para aquisição de sinais analógicos utilizando ADS1115 e multiplexador.
  *
- * Este nó permite adquirir sinais analógicos de múltiplos sensores conectados
- * a um conversor ADC ADS1115, possivelmente multiplexados por um MUX controlado
- * por três pinos GPIO. Os valores lidos são publicados em um tópico ROS 2 como
- * Int32MultiArray para cada ciclo do MUX.
+ * Este nó realiza a leitura de até quatro canais do ADC ADS1115 enquanto
+ * alterna sequencialmente os estados de um multiplexador controlado por
+ * três GPIOs. A cada ciclo, os valores adquiridos são publicados através
+ * da mensagem SensorMuxFrame.
  *
- * Características principais:
- * - Configuração de pinos do MUX via parâmetros ROS 2 (pin_a, pin_b, pin_c)
- * - Configuração do ADS1115 via parâmetros ROS 2 (i2c_device, i2c_address)
- * - Leitura periódica dos canais 2 e 3 do ADS1115
- * - Publicação do estado do MUX e dos valores lidos em /sensor_mux/data
- * - Loop em alta frequência (~1 kHz) utilizando rclcpp::TimerBase
+ * Funcionalidades:
+ * - Configuração dos pinos de seleção do multiplexador via parâmetros ROS 2
+ * - Configuração da interface I2C e endereço do ADS1115
+ * - Leitura dos quatro canais do ADS1115
+ * - Associação de nomes aos sensores conforme o estado atual do multiplexador
+ * - Publicação dos dados no tópico sensor_mux/data
+ * - Operação periódica em frequência configurável
  *
  * Parâmetros ROS 2:
- * - pin_a/pin_b/pin_c (int): pinos GPIO usados para controle do MUX
- * - i2c_device (string): caminho do dispositivo I2C (ex: "/dev/i2c-1")
+ * - frequency (int): frequência de execução do nó em Hz
+ * - pin_a (int): GPIO A do multiplexador
+ * - pin_b (int): GPIO B do multiplexador
+ * - pin_c (int): GPIO C do multiplexador
+ * - i2c_device (string): dispositivo I2C (ex.: "/dev/i2c-1")
  * - i2c_address (int): endereço I2C do ADS1115
  *
- * Tópicos publicados:
- * - /sensor_mux/data (std_msgs/msg/Int32MultiArray)
- *   Conteúdo:
- *     [0] -> estado atual do MUX (0-7)
- *     [1] -> valor do canal 3 do ADS1115
- *     [2] -> valor do canal 2 do ADS1115
+ * Tópico publicado:
+ * - sensor_mux/data (manager_msgs/msg/SensorMuxFrame)
  *
- * Exemplo de uso:
- * - Configurar parâmetros via YAML ou launch file
- * - O nó alterna os estados do MUX e lê os canais do ADS1115 periodicamente
- * - Os valores são publicados continuamente no tópico /sensor_mux/data
+ * Estrutura da mensagem:
+ * - header: timestamp e frame de referência
+ * - valid: indica validade da aquisição
+ * - mux_state: estado atual do multiplexador (0 a 7)
+ * - channel_X_name: identificação lógica do sensor conectado ao canal
+ * - channel_X_raw: valor bruto lido pelo ADS1115
  *
- * Observações:
- * - Implementa leitura de canais críticos para suspensão, freio e direção
- * - Mapas de interpretação para canais podem ser modificados em map_ch3_ e map_ch2_
+ * Mapeamento atual:
+ * - Canal 2:
+ *   - Estado 4 -> steering
+ *   - Estado 5 -> extra_0
+ *   - Estado 6 -> extra_1
+ *   - Estado 7 -> extra_2
+ *
+ * - Canal 3:
+ *   - Estados 0 a 3 -> brake_0 a brake_3
+ *   - Estado 4 -> susp_fl
+ *   - Estado 5 -> susp_fr
+ *   - Estado 6 -> susp_rl
+ *   - Estado 7 -> susp_rr
  */
 
 #pragma once
@@ -41,9 +53,12 @@
 #include <memory>
 #include <array>
 #include <string>
+#include <map>
+#include <chrono>
+#include <iomanip>
 
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/int32_multi_array.hpp"
+#include "std_msgs/msg/float64.hpp"
 
 #include "io_manager/drivers/ads1115.hpp"
 #include "io_manager/drivers/mux.hpp"
@@ -59,11 +74,16 @@ private:
     std::shared_ptr<Mux> mux_;
     std::shared_ptr<Ads1115> ads_;
 
-    rclcpp::Publisher<std_msgs::msg::Int32MultiArray>::SharedPtr pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
     uint8_t mux_state_;
 
-    std::array<std::string, 8> map_ch3_;
+    bool enable_ch_[4];
+
+    std::array<std::string, 8> map_ch0_;
+    std::array<std::string, 8> map_ch1_;
     std::array<std::string, 8> map_ch2_;
+    std::array<std::string, 8> map_ch3_;
+
+    std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
 };

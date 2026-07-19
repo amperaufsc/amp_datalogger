@@ -16,6 +16,12 @@ install(
 )
 
 install(
+  PROGRAMS ros2/nodes/pressure_measurement_node.py
+  DESTINATION lib/${PROJECT_NAME}  
+  RENAME pressure_measurement_node
+)
+
+install(
   PROGRAMS ros2/tools/fake_encoder_node.py
   DESTINATION lib/${PROJECT_NAME}  
   RENAME fake_encoder_node
@@ -23,6 +29,11 @@ install(
 
 install(
   PROGRAMS src/datalogger/algorithms/wheel_speed_measurement.py
+  DESTINATION lib/${PROJECT_NAME}/src/datalogger/algorithms
+)
+
+install(
+  PROGRAMS src/datalogger/algorithms/pressure_measurement.py
   DESTINATION lib/${PROJECT_NAME}/src/datalogger/algorithms
 )
 

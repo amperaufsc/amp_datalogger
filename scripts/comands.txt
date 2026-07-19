@@ -1,0 +1,143 @@
+========================================
+CPU / SISTEMA
+========================================
+
+# Temperatura da CPU
+vcgencmd measure_temp
+
+# Clock da CPU
+vcgencmd measure_clock arm
+
+
+========================================
+GPIO
+========================================
+
+# Listar GPIOs
+gpioinfo
+
+# Ler estado de um GPIO
+gpioget gpiochip0 17
+
+# Alterar estado de um GPIO
+gpioset gpiochip0 17=1
+
+# Monitorar mudanças de estado
+gpiomon gpiochip0 17
+
+
+========================================
+SPI
+========================================
+
+# Interfaces SPI disponíveis
+ls /dev/spidev*
+
+# Módulos SPI carregados
+lsmod | grep spi
+
+# Dispositivos SPI
+ls /sys/bus/spi/devices/
+
+
+========================================
+I²C
+========================================
+
+# Listar barramentos I²C
+i2cdetect -l
+
+# Escanear barramento 1
+sudo i2cdetect -y 1
+
+# Ler registrador
+i2cget -y 1 0x48 0x00
+
+# Escrever registrador
+i2cset -y 1 0x48 0x01 0x83
+
+# Dump completo do dispositivo
+i2cdump -y 1 0x48
+
+
+========================================
+MCP2515
+========================================
+
+# Verificar driver
+dmesg | grep mcp
+
+# Verificar SPI
+dmesg | grep spi
+
+# Interfaces de rede
+ip link show
+
+# Ativar interface CAN
+sudo ip link set can0 up type can bitrate 500000
+
+# Desativar interface CAN
+sudo ip link set can0 down
+
+# Ver estado detalhado
+ip -details link show can0
+
+
+========================================
+CAN
+========================================
+
+# Ler barramento
+candump can0
+
+# Enviar mensagem
+cansend can0 123#1122334455667788
+
+# Estatísticas da interface
+ip -details -statistics link show can0
+
+# Ver erros
+dmesg | grep can
+
+# Monitorar interface em tempo real
+watch -n1 "ip -details link show can0"
+
+
+========================================
+SERIAL
+========================================
+
+# Listar portas seriais
+ls /dev/tty*
+
+
+========================================
+KERNEL
+========================================
+
+# Monitorar mensagens do kernel em tempo real
+dmesg -w
+
+========================================
+SYSTEMCTL
+========================================
+
+# Ver status
+systemctl status as_system.service
+systemctl status datalogger.service
+
+# Acompanhar logs em tempo real
+journalctl -u as_system.service -f
+journalctl -u datalogger.service -f
+
+# Parar
+sudo systemctl stop as_system.service
+sudo systemctl stop datalogger.service
+
+# Reiniciar
+sudo systemctl restart as_system.service
+sudo systemctl restart datalogger.service
+
+# Desabilitar inicialização automática
+sudo systemctl disable as_system.service
+sudo systemctl disable datalogger.service

@@ -1,0 +1,31 @@
+/io_manager/sensor_mux_node:
+  ros__parameters:
+    frequency: 400
+
+    enable_channel_0: false
+    enable_channel_1: false
+    enable_channel_2: true
+    enable_channel_3: true
+
+    map_ch0: ["", "", "", "", "", "", "", ""]
+    map_ch1: ["", "", "", "", "", "", "", ""]
+
+    map_ch2:
+      - ""
+      - ""
+      - ""
+      - ""
+      - "steering"
+      - ""
+      - ""
+      - ""
+
+    map_ch3:
+      - "susp_fr" 
+      - ""
+      - ""
+      - "brake_0"
+      - "susp_fl"
+      - "brake_1"
+      - "susp_rl"
+      - "susp_rr"
