@@ -95,9 +95,19 @@ target_include_directories(ms4525do_test_node
     include
 )
 
+add_executable(pitot_sensor_node
+  ros2/nodes/pitot_sensor_node.cpp
+)
+
+target_include_directories(pitot_sensor_node
+  PRIVATE
+  include
+)
+
 # Link com a biblioteca core
 target_link_libraries(sensor_mux_node io_manager_core)
 target_link_libraries(ms4525do_test_node io_manager_core)
+target_link_libraries(pitot_sensor_node io_manager_core)
 
 # Dependências ROS2
 ament_target_dependencies(sensor_mux_node
@@ -109,11 +119,19 @@ ament_target_dependencies(ms4525do_test_node
     rclcpp
 )
 
+ament_target_dependencies(
+  pitot_sensor_node
+  rclcpp
+  std_msgs
+)
+
 install(TARGETS
     sensor_mux_node
     ms4525do_test_node
+    pitot_sensor_node
     DESTINATION lib/${PROJECT_NAME}
 )
+
 
 # =========================
 # Install
