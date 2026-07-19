@@ -32,6 +32,7 @@ add_library(io_manager_core SHARED
   src/io_manager/drivers/libgpiod_gpio_interrupt.cpp
   src/io_manager/drivers/ads1115.cpp
   src/io_manager/drivers/mux.cpp
+  src/io_manager/drivers/ms4525do.cpp
 
   # Factories
   src/io_manager/factory/gpio_factory.cpp
@@ -85,8 +86,18 @@ target_include_directories(sensor_mux_node
     include
 )
 
+add_executable(ms4525do_test_node
+    ros2/tools/ms4525do_test_node.cpp
+)
+
+target_include_directories(ms4525do_test_node
+    PRIVATE
+    include
+)
+
 # Link com a biblioteca core
 target_link_libraries(sensor_mux_node io_manager_core)
+target_link_libraries(ms4525do_test_node io_manager_core)
 
 # Dependências ROS2
 ament_target_dependencies(sensor_mux_node
@@ -94,8 +105,14 @@ ament_target_dependencies(sensor_mux_node
   std_msgs
 )
 
-install(TARGETS sensor_mux_node
-  DESTINATION lib/${PROJECT_NAME}
+ament_target_dependencies(ms4525do_test_node
+    rclcpp
+)
+
+install(TARGETS
+    sensor_mux_node
+    ms4525do_test_node
+    DESTINATION lib/${PROJECT_NAME}
 )
 
 # =========================
