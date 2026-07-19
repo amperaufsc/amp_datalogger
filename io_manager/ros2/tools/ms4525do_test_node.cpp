@@ -1,3 +1,34 @@
+/**
+ * @file ms4525do_test_node.cpp
+ *
+ * @brief Test application for MS4525DO differential pressure sensor driver.
+ *
+ * This executable validates the communication and data acquisition of the
+ * MS4525DO sensor through the I2C interface.
+ *
+ * The test performs:
+ *  - Initialization of the MS4525DO driver
+ *  - Periodic reading of differential pressure and temperature data
+ *  - Validation of sensor status information
+ *  - Display of communication errors and sensor diagnostic states
+ *
+ * Hardware configuration:
+ *  - I2C bus: 1
+ *  - I2C address: 0x28
+ *
+ * The application does not publish ROS2 topics. It is intended only for
+ * validating the sensor driver before integration into a ROS2 node.
+ *
+ * Output example:
+ *  Pressure: 15.4 Pa | Temperature: 24.8 °C
+ *
+ * Possible errors:
+ *  - I2C communication error
+ *  - Sensor returned stale data
+ *  - Sensor is in command mode
+ *  - Sensor diagnostic fault
+ */
+
 #include <chrono>
 #include <iostream>
 #include <thread>
