@@ -4,7 +4,6 @@
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <i2c/smbus.h>
 
 #include <cmath>
 #include <cstring>
@@ -49,6 +48,18 @@ bool MS4525DO::initialize()
         return false;
     }
 
+
+    uint8_t test_byte;
+
+    int ret = ::read(fd_, &test_byte, 1);
+
+    if (ret < 0)
+    {
+        close(fd_);
+        fd_ = -1;
+        return false;
+    }
+
     return true;
 }
 
@@ -59,13 +70,9 @@ bool MS4525DO::readRaw(
 {
     uint8_t data[4];
 
-    int ret = i2c_smbus_read_i2c_block_data(
-        fd_,
-        0,
-        4,
-        data);
+    int result = ::read(fd_, data, 4);
 
-    if (ret != 4)
+    if (result != 4)
     {
         return false;
     }
@@ -83,7 +90,7 @@ bool MS4525DO::readRaw(
     return true;
 }
 
-Measurement MS4525DO::read()
+MS4525DO::Measurement MS4525DO::read()
 {
     Measurement m;
 
