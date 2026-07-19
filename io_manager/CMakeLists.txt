@@ -97,9 +97,6 @@ ament_target_dependencies(sensor_mux_node
   manager_msgs
 )
 
-# =========================
-# C++ ROS 2 tool: sensor_debug_node
-# =========================
 add_executable(sensor_debug_node
   ros2/tools/sensor_debug_node.cpp
 )
@@ -191,6 +188,18 @@ install(PROGRAMS
 install(PROGRAMS
   src/io_manager/algorithms/utils.py
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  ros2/nodes/uart_receiver_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME uart_receiver_node
+)
+
+install(PROGRAMS
+  ros2/nodes/uart_sender_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME uart_sender_node
 )
 
 # Config
