@@ -21,6 +21,7 @@ find_package(pybind11 REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGPIOD REQUIRED libgpiod)
+pkg_check_modules(I2C REQUIRED libi2c)
 
 # =========================
 # Core C++ library
@@ -46,11 +47,13 @@ target_include_directories(io_manager_core
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${LIBGPIOD_INCLUDE_DIRS}
+    ${I2C_INCLUDE_DIRS}
 )
 
 target_link_libraries(io_manager_core
   PUBLIC
     ${LIBGPIOD_LIBRARIES}
+    ${I2C_LIBRARIES}
 )
 
 ament_target_dependencies(io_manager_core)

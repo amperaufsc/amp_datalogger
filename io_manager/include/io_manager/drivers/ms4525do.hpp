@@ -6,11 +6,23 @@
 class MS4525DO
 {
 public:
+
+    enum class Status
+    {
+        OK,
+        STALE_DATA,
+        COMMAND_MODE,
+        DIAGNOSTIC_FAULT,
+        I2C_ERROR
+    };
+
     struct Measurement
     {
         double differential_pressure_pa;
         double temperature_c;
+
         bool valid;
+        Status status;
     };
 
     MS4525DO(

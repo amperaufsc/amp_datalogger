@@ -4,6 +4,7 @@
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <i2c/smbus.h>
 
 #include <cmath>
 #include <cstring>
@@ -58,7 +59,13 @@ bool MS4525DO::readRaw(
 {
     uint8_t data[4];
 
-    if (::read(fd_, data, 4) != 4)
+    int ret = i2c_smbus_read_i2c_block_data(
+        fd_,
+        0,
+        4,
+        data);
+
+    if (ret != 4)
     {
         return false;
     }
@@ -76,27 +83,44 @@ bool MS4525DO::readRaw(
     return true;
 }
 
-MS4525DO::Measurement MS4525DO::read()
+Measurement MS4525DO::read()
 {
     Measurement m;
 
     uint16_t pressure_counts;
     uint16_t temperature_counts;
-    uint8_t status;
+    uint8_t raw_status;
 
     if (!readRaw(
             pressure_counts,
             temperature_counts,
-            status))
+            raw_status))
     {
         m.valid = false;
+        m.status = Status::I2C_ERROR;
         return m;
     }
 
-    if (status != 0)
+    switch (raw_status)
     {
-        m.valid = false;
-        return m;
+        case 0:
+            m.status = Status::OK;
+            break;
+
+        case 1:
+            m.valid = false;
+            m.status = Status::STALE_DATA;
+            return m;
+
+        case 2:
+            m.valid = false;
+            m.status = Status::COMMAND_MODE;
+            return m;
+
+        case 3:
+            m.valid = false;
+            m.status = Status::DIAGNOSTIC_FAULT;
+            return m;
     }
 
     constexpr double OUTPUT_MIN = 1638.0;
@@ -104,8 +128,8 @@ MS4525DO::Measurement MS4525DO::read()
 
     m.differential_pressure_pa =
         ((pressure_counts - OUTPUT_MIN) *
-         (pressure_max_pa_ - pressure_min_pa_) /
-         (OUTPUT_MAX - OUTPUT_MIN))
+        (pressure_max_pa_ - pressure_min_pa_) /
+        (OUTPUT_MAX - OUTPUT_MIN))
         + pressure_min_pa_;
 
     m.temperature_c =
